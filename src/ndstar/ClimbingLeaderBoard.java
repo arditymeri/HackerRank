@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 public class ClimbingLeaderBoard {
 
     /**
-     *
      * @param ranked sorted board in decreasing order
      * @param player games played
      * @return
@@ -33,10 +32,45 @@ public class ClimbingLeaderBoard {
         return climbingPositions;
     }
 
+    /**
+     * This is a more efficient solution using {@link TreeMap}
+     *
+     * @param ranked sorted board in decreasing order
+     * @param player sorted games played in increasing order
+     * @return climbing positions
+     */
+    public static List<Integer> climbingLeaderboardTreeMap(List<Integer> ranked, List<Integer> player) {
+        TreeMap<Integer, Integer> treeMap = new TreeMap<>();
+        int pos = 1;
+        for (Integer rank : ranked) {
+            if (!treeMap.containsKey(rank)) {
+                treeMap.put(rank, pos);
+                pos++;
+            }
+        }
+
+        List<Integer> climbingPositions = new ArrayList<>();
+        for (Integer game : player) {
+            Integer rank = treeMap.get(game);
+            if (rank != null) {
+                climbingPositions.add(rank);
+            } else {
+                Map.Entry<Integer, Integer> ceiling = treeMap.ceilingEntry(game);
+                if (ceiling != null) {
+                    climbingPositions.add(ceiling.getValue() + 1);
+                } else {
+                    climbingPositions.add(1);
+                }
+            }
+        }
+        return climbingPositions;
+    }
+
     public static void main(String[] args) {
         List<Integer> ranked = Arrays.asList(100, 90, 90, 80, 75, 60);
         List<Integer> player = Arrays.asList(50, 65, 77, 90, 102);
-        List<Integer> climbingList = climbingLeaderboard(ranked, player);
+//        List<Integer> climbingList = climbingLeaderboard(ranked, player);
+        List<Integer> climbingList = climbingLeaderboardTreeMap(ranked, player);
         String boardPositions = climbingList.stream()
                 .map(Object::toString)
                 .collect(Collectors.joining("\n"));
