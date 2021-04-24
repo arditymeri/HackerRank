@@ -1,61 +1,57 @@
 package ndstar;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class MagicSquare {
 
     // Complete the formingMagicSquare function below.
     static int formingMagicSquare(int[][] s) {
-        int [][] temp = {{0,0,0},{0,0,0},{0,0,0}};
-        int cost = 81;
-        for (int i = 111111111; i <= 999999999; i++) {
-            int key = i;
-
-            temp[0][0] = key % 10;
-            key /= 10;
-
-            temp[0][1] = key % 10;
-            key /= 10;
-
-            temp[0][2] = key % 10;
-            key /= 10;
-
-            temp[1][0] = key % 10;
-            key /= 10;
-
-            temp[1][1] = key % 10;
-            key /= 10;
-
-            temp[1][2] = key % 10;
-            key /= 10;
-
-            temp[2][0] = key % 10;
-            key /= 10;
-
-            temp[2][1] = key % 10;
-            key /= 10;
-
-            temp[2][2] = key % 10;
-
-            if(!hasZeros(temp)
-                    //&& isMagic(temp)
-            ) {
-                int currentCost = findCost(temp, s);
-                if(currentCost < cost) {
-                    cost = currentCost;
-                }
+        int cost = 72;
+        for (int i = 1; i < 9; i++) {
+            int[][] current = new int[3][3];
+            current[0][0] = i;
+            int newCost = findCost(current, 0, cost, s);
+            if (newCost < cost) {
+                cost = newCost;
             }
         }
         return cost;
     }
 
-    private static int findCost(int[][] temp, int[][] s) {
+    private static int findCost(int[][] current, int index, int cost, int[][] s) {
+        if (index == 9) {
+            if (!isMagic(current)) {
+                return cost;
+            }
+            int newCost = calcCost(current, s);
+            return Math.min(newCost, cost);
+        }
+        int minCost = cost;
+        for (int i = 1; i <= 9; i++) {
+            if (!containsKey(current, index + 1, i)) {
+                current[index / 3][index % 3] = i;
+                int currentCost = findCost(current, index + 1, minCost, s);
+                if (currentCost < minCost) {
+                    minCost = currentCost;
+                }
+            }
+        }
+        return minCost;
+    }
+
+    private static boolean containsKey(int[][] current, int index, int key) {
+        for (int i = 0; i < index; i++) {
+            if (current[i / 3][i % 3] == key) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static int calcCost(int[][] temp, int[][] s) {
         int cost = 0;
-        for(int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 cost += Math.abs(temp[i][j] - s[i][j]);
             }
@@ -66,7 +62,7 @@ public class MagicSquare {
     private static boolean isMagic(int[][] temp) {
         int firstRow = Arrays.stream(temp[0]).sum();
         int secondRow = Arrays.stream(temp[1]).sum();
-        if(firstRow != secondRow) {
+        if (firstRow != secondRow) {
             return false;
         }
         int thirdRow = Arrays.stream(temp[2]).sum();
@@ -93,20 +89,20 @@ public class MagicSquare {
 
     }
 
-    private static boolean hasZeros(int[][] temp) {
-        return Arrays.stream(temp)
-                .flatMapToInt(Arrays::stream)
-                .anyMatch(i -> i == 0);
+    private static void printMagicSquare(int[][] current) {
+        String matrix = Arrays.stream(current)
+                .map(row ->
+                        Arrays.stream(row)
+                                .boxed()
+                                .map(Object::toString)
+                                .collect(Collectors.joining(",")))
+                .collect(Collectors.joining("\n"));
+        System.out.println("Magic Square");
+        System.out.println(matrix);
     }
 
-    private static final Scanner scanner = new Scanner(System.in);
-
-    public static void main(String[] args) throws IOException {
-
-        int[][] s =
-                {{4, 8, 2},
-                {4, 5, 7},
-                {6, 1, 6}};
+    public static void main(String[] args) {
+        int[][] s ={{4, 9, 2}, {3, 5, 7}, {8, 1, 5}};
         int result = formingMagicSquare(s);
         System.out.println("Result: " + result);
 
