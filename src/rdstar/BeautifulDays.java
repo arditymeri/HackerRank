@@ -1,11 +1,5 @@
 package rdstar;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
  * Lily likes to play games with integers. She has created a new game where she determines the
  * difference between a number and its reverse. For instance, given the number 12, its reverse is 21.
@@ -25,13 +19,13 @@ public class BeautifulDays {
         int n = 0;
         for (int day = i; day <= j; day++) {
             String value = Integer.toString(day);
-            List<Integer> digits = new ArrayList<>(value.chars().boxed().collect(Collectors.toList()));
-            Collections.reverse(digits);
-            String reversedValue = digits.stream()
-                    .map(d -> Character.valueOf((char)d.intValue()).toString())
-                    .collect(Collectors.joining());
+            StringBuilder sb = new StringBuilder();
+            sb.append(value);
+            sb.reverse();
+            String reversedValue = sb.toString();
             int reversed = Integer.parseInt(reversedValue);
-            int r = Math.abs(i - reversed);
+            int r = Math.abs(day - reversed);
+            System.out.println( "Day: " + day+ ",\t" + " reversed: " + reversed + ",\t difference:" + r);
             if (r % k == 0) {
                 n++;
             }
@@ -40,7 +34,7 @@ public class BeautifulDays {
     }
 
     public static void main(String[] args) {
-        int result = beautifulDays(20, 23, 6);
+        int result = beautifulDays(13, 45, 3);
         System.out.println(result);
     }
 }
