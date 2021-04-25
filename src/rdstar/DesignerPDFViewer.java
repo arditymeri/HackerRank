@@ -7,14 +7,7 @@ public class DesignerPDFViewer {
 
     public static int designerPdfViewer(List<Integer> h, String word) {
         // Write your code here
-        char c = 'a';
-        Map<Integer, Integer> heights = new HashMap<>();
-        for (int i = 0; i < 26; i++) {
-            heights.put((int) c, h.get(i));
-            c++;
-        }
-
-        int maxHeight = word.chars().map(heights::get).max().orElse(0);
+        int maxHeight = word.chars().map(c -> h.get(c - 97)).max().orElse(0);
         return maxHeight * word.length();
 
     }
