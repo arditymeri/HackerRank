@@ -1,23 +1,28 @@
 package fourthstar;
 
+/**
+ * You have two strings of lowercase English letters. You can perform two types of operations on the first string:
+ * <p>
+ * 1. Append a lowercase English letter to the end of the string.
+ * 2. Delete the last character of the string. Performing this operation on an empty string results in an empty string.
+ * Given an integer, k, and two strings, s and t, determine whether or not you can convert s to t by performing
+ * exactly k of the above operations on s. If it's possible, print Yes. Otherwise, print No.
+ */
 public class AppendAndDelete {
 
     public static String appendAndDelete(String s, String t, int k) {
         // Write your code here
-        int lLen = s.length();
+        int sLen = s.length();
         int tLen = t.length();
-
-        if (lLen == tLen) {
+        int diffLen = Math.abs(sLen - tLen);
+        if (sLen == tLen) {
             return compareSameLength(s, t, k);
-        } else if (lLen > tLen) {
-            int diffLen = lLen - tLen;
-            String prefixS = s.substring(0, diffLen);
+        } else if (sLen > tLen) {
+            String prefixS = s.substring(0, tLen);
             return compareSameLength(prefixS, t, k - diffLen);
-
         } else {
-            int diffLen = tLen - lLen;
-            String prefixS = t.substring(0, diffLen);
-            return compareSameLength(prefixS, t, k - diffLen);
+            String prefixT = t.substring(0, sLen);
+            return compareSameLength(s, prefixT, k - diffLen);
         }
     }
 
@@ -35,8 +40,8 @@ public class AppendAndDelete {
             return no;
         }
         int halfK = k / 2;
-        String sPrefix = s.substring(0, halfK);
-        String tPrefix = t.substring(0, halfK);
+        String sPrefix = s.substring(0, lLen - halfK);
+        String tPrefix = t.substring(0, lLen - halfK);
         if (sPrefix.equals(tPrefix)) {
             return yes;
         } else {
@@ -45,9 +50,9 @@ public class AppendAndDelete {
     }
 
     public static void main(String[] args) {
-//        String result = appendAndDelete("hackerhappy", "hackerrank", 9);
-//        String result = appendAndDelete("aba", "aba", 7);
-        String result = appendAndDelete("ashley", "ash", 2);
+
+
+        String result = appendAndDelete("bbbbb", "babbb", 8);
         System.out.println(result);
     }
 }
