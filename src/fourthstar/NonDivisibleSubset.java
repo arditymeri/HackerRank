@@ -1,32 +1,85 @@
 package fourthstar;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.io.*;
+import java.time.Duration;
+import java.util.*;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 /**
- *
  * #Medium
  */
 public class NonDivisibleSubset {
 
     public static int nonDivisibleSubset(int k, List<Integer> s) {
-        int maxSize = 0;
-        for (Integer i : s) {
-            List<Integer> newSet = new ArrayList<>(s);
-            newSet.remove(i);
-            List<Integer> subset = Collections.singletonList(i);
-            int size = findNextMaxSubset(k, subset, newSet);
-            if (size > maxSize) {
-                maxSize = size;
+        int removed = 0;
+        int n = s.size();
+        short[][] cross = calcCrossMatrix(k, s);
+        while (hasOnes(cross, n)) {
+            int index = findMaxCol(cross, n);
+            for (int i = 0; i < n; i++) {
+                cross[i][index] = 0;
+                cross[index][i] = 0;
             }
+            removed++;
         }
-
-        return maxSize;
+        return n - removed;
     }
 
-    public static int findNextMaxSubset(int k, List<Integer>subset, List<Integer> set) {
+    private static int findMaxCol(short[][] cross, int n) {
+        int index = 0;
+        int maxSum = 0;
+        for (int i = 0; i < n; i++) {
+            int sum = 0;
+            for (int j = 0; j < n; j++) {
+                sum += cross[i][j];
+            }
+            if (sum > maxSum) {
+                index = i;
+                maxSum = sum;
+            }
+        }
+        return index;
+    }
+
+    private static boolean hasOnes(short[][] cross, int n) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (cross[i][j] == 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static short[][] calcCrossMatrix(int k, List<Integer> s) {
+        int size = s.size();
+        short[][] crossMatrix = new short[size][size];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                boolean divisible = false;
+                if (i != j) {
+                    divisible = (s.get(i) + s.get(j)) % k == 0;
+                }
+                crossMatrix[i][j] = divisible ? (short) 1 : (short)0;
+            }
+        }
+        return crossMatrix;
+    }
+
+    public static void main(String[] args) {
+        long start = System.nanoTime();
+//        int max = nonDivisibleSubset(3, Arrays.asList(1, 7, 2, 4));
+        int max = nonDivisibleSubset(7, Arrays.asList(278, 576, 496, 727, 410, 124, 338, 149, 209, 702, 282, 718, 771, 575, 436));
+        System.out.println(max);
+        Duration duration = Duration.ofNanos(System.nanoTime() - start);
+        System.out.println("Duration:" + duration.toSeconds());
+
+    }
+
+    public static int findNextMaxSubset(int k, List<Integer> subset, List<Integer> set) {
         int maxSize = subset.size();
         for (Integer i : set) {
             boolean nonDivisible = true;
@@ -36,7 +89,7 @@ public class NonDivisibleSubset {
                     break;
                 }
             }
-            if(nonDivisible) {
+            if (nonDivisible) {
                 maxSize = subset.size() + 1;
                 List<Integer> newSubset = new ArrayList<>(subset);
                 newSubset.add(i);
@@ -50,13 +103,30 @@ public class NonDivisibleSubset {
         }
         return maxSize;
     }
+}
 
-    public static void main(String[] args) {
-//        int max = nonDivisibleSubset(3, Arrays.asList(1, 7, 2, 4));
-        long start = System.nanoTime();
-        int max = nonDivisibleSubset(7, Arrays.asList(278, 576, 496, 727, 410, 124, 338, 149, 209, 702, 282, 718, 771, 575, 436));
-        System.out.println(max);
-        System.out.println("Duration:" + (System.nanoTime() - start));
+class Solution {
+    public static void main(String[] args) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new FileReader("input09.txt"));
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("NonDivisibleResult.txt"));
 
+        String[] firstMultipleInput = bufferedReader.readLine().replaceAll("\\s+$", "").split(" ");
+
+        int n = Integer.parseInt(firstMultipleInput[0]);
+
+        int k = Integer.parseInt(firstMultipleInput[1]);
+
+        List<Integer> s = Stream.of(bufferedReader.readLine().replaceAll("\\s+$", "").split(" "))
+                .map(Integer::parseInt)
+                .collect(toList());
+
+        int result = NonDivisibleSubset.nonDivisibleSubset(k, s);
+
+        bufferedWriter.write(String.valueOf(result));
+        bufferedWriter.newLine();
+
+        bufferedReader.close();
+        bufferedWriter.close();
     }
 }
+
