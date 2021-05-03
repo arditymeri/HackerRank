@@ -3,6 +3,8 @@ package fourthstar;
 import java.io.*;
 import java.time.Duration;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -13,6 +15,32 @@ import static java.util.stream.Collectors.toList;
 public class NonDivisibleSubset {
 
     public static int nonDivisibleSubset(int k, List<Integer> s) {
+        int originalN = s.size();
+        List<Integer> moduloK = s.stream()
+                .map(i -> i % k)
+                .collect(Collectors.toList());
+        Map<Integer, Long> distinctModuloK = moduloK.stream()
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        for (int i = 0; i < k; i++) {
+            if(!distinctModuloK.containsKey(i)) {
+                distinctModuloK.put(i, 0L);
+            }
+        }
+        int toRemove = (int) Math.max(0,  distinctModuloK.get(0) - 1);
+        for (int i = 1; i <= (k-1)/2; i++) {
+            toRemove += Math.min(distinctModuloK.get(i), distinctModuloK.get(k-i));
+        }
+        if (k % 2 == 0) {
+            toRemove += (int) Math.max(0,  distinctModuloK.get(k/2) - 1);
+        }
+        return originalN - toRemove;
+    }
+
+    /*
+     * Removing elements. Timeout exception.
+     * Find the number with most hits. Remove it. Until there are no more numbers with hits.
+     */
+    public static int nonDivisibleSubset3(int k, List<Integer> s) {
         while (true) {
             int index = findMaxCol(s, k);
             if (index < 0) {
