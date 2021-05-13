@@ -5,16 +5,17 @@ import java.util.List;
 
 public class ACMICPCTeam {
 
-
     public static List<Integer> acmTeam(List<String> topic) {
         int[][] topics = new int[topic.size()][topic.get(0).length()];
         int ii = 0;
         int n = topics.length;
         for (String aTopic : topic) {
-            int[] topicArray = new int[aTopic.length()];
-            for (int i = 0; i < aTopic.length(); i++) {
-                topicArray[i]= Integer.parseInt(Character.toString(aTopic.charAt(i)));
-            }
+            int[] topicArray = aTopic
+                    .chars()
+                    .mapToObj(charValue -> Character.toString((char) charValue))
+                    .map(Integer::parseInt)
+                    .mapToInt(Integer::intValue)
+                    .toArray();
             topics[ii] = topicArray;
             ii++;
         }
@@ -30,7 +31,6 @@ public class ACMICPCTeam {
                 } else if (val == max) {
                     numTeams++;
                 }
-
             }
         }
         return Arrays.asList(max, numTeams);
