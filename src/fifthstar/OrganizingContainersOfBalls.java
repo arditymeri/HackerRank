@@ -1,38 +1,38 @@
 package fifthstar;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OrganizingContainersOfBalls {
 
     public static String organizingContainers(List<List<Integer>> container) {
-        int n = container.size();
-        for (int i = 0; i < n; i++) {
-            boolean swapped = swapAll(i, container);
-            if (!swapped) {
+        List<Integer> containerSizes = container
+                .stream()
+                .map(c -> c.stream().mapToInt(Integer::intValue).sum())
+                .collect(Collectors.toList());
+        List<Integer> colors = sumColons(container);
+        for (Integer containerSize : containerSizes) {
+            boolean removed = colors.remove(containerSize);
+            if (!removed) {
                 return "Impossible";
             }
         }
-        return "Possible";
+        return colors.isEmpty() ? "Possible" : "Impossible";
     }
 
-    private static boolean swapAll(int j, List<List<Integer>> containers) {
-        List<Integer> balls = containers.get(j);
-        long sum = balls.stream().mapToLong(Integer::longValue).sum();
-        long c = (long) balls.get(j);
-
-        if (sum == c) {
-            return true;
-        }
-        long r = sum - c;
-        long s = 0;
-        for (int i = 0; i < containers.size(); i++) {
-            if (i != j) {
-                List<Integer> container = containers.get(i);
-                s += container.get(j);
+    private static List<Integer> sumColons(List<List<Integer>> containers) {
+        List<Integer> colors = new ArrayList<>();
+        int m = containers.get(0).size();
+        for (int j = 0; j < m; j++) {
+            int sum = 0;
+            for (List<Integer> container : containers) {
+                sum += container.get(j);
             }
+            colors.add(sum);
         }
-        return s == r;
+        return colors;
     }
 
     public static void main(String[] args) {
@@ -70,7 +70,7 @@ public class OrganizingContainersOfBalls {
                 Arrays.asList(2, 1, 0, 1),
                 Arrays.asList(0, 0, 0, 3)
         );
-        result = organizingContainers(containers2);
+        result = organizingContainers(containers22);
         System.out.println(result);
 
 
