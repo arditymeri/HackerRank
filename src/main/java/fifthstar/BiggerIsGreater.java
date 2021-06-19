@@ -29,7 +29,7 @@ public class BiggerIsGreater {
         for (int i = w.length() - 1; i >= 0; i--) {
             int firstLeftSideSmallerThan = findFirstFirstSmallerThan(w, i);
             if (firstLeftSideSmallerThan >= 0) {
-                String suffix = w.substring(firstLeftSideSmallerThan, i) + w.substring(i+1);
+                String suffix = w.substring(firstLeftSideSmallerThan, i) + w.substring(i + 1);
                 String sortedSuffix = sortValue(suffix);
                 String prefix = w.substring(0, firstLeftSideSmallerThan);
                 return prefix + w.charAt(i) + sortedSuffix;
@@ -50,7 +50,7 @@ public class BiggerIsGreater {
         for (int i = index - 1; i >= 0; i--) {
             char c = w.charAt(i);
             if (c < key) {
-                return  i;
+                return i;
             }
         }
         return -1;
@@ -58,9 +58,9 @@ public class BiggerIsGreater {
 
     public static void main(String[] args) {
         /*
-        *
-        * "ab", "bb", "hefg", "dhck", "dkhc"
-        * "lmno", "dcba", "dcbb", "abdc", "abcd", "fedcbabcd"
+         *
+         * "ab", "bb", "hefg", "dhck", "dkhc"
+         * "lmno", "dcba", "dcbb", "abdc", "abcd", "fedcbabcd"
          */
 
         List<String> sample0 = Arrays.asList("ab", "bb", "hefg", "dhck", "dkhc");
@@ -73,4 +73,8 @@ public class BiggerIsGreater {
         sample1.stream().map(BiggerIsGreater::biggerIsGreater).forEach(System.out::println);
 
     }
+
+
+
+
 }
