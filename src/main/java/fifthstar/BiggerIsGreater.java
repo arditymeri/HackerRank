@@ -14,26 +14,25 @@ import java.util.stream.Collectors;
  * It must be the smallest word that meets the first condition
  */
 public class BiggerIsGreater {
-    /*
-     * hefg -> hegf
-     * abcd -> abdc
-     * 1234 -> 1243
-     * 9475 -> 9547
-     * 927846493 -> 932446789
-     * 8674839 -> 8674893
-     * 19892 -> 21899
-     * 98971 -> 99871
-     */
+
     public static String biggerIsGreater(String w) {
-        // Write your code here
+        int leftMost = -1;
+        int index = 0;
+
         for (int i = w.length() - 1; i >= 0; i--) {
             int firstLeftSideSmallerThan = findFirstFirstSmallerThan(w, i);
             if (firstLeftSideSmallerThan >= 0) {
-                String suffix = w.substring(firstLeftSideSmallerThan, i) + w.substring(i + 1);
-                String sortedSuffix = sortValue(suffix);
-                String prefix = w.substring(0, firstLeftSideSmallerThan);
-                return prefix + w.charAt(i) + sortedSuffix;
+                if(firstLeftSideSmallerThan > leftMost) {
+                    leftMost = firstLeftSideSmallerThan;
+                    index = i;
+                }
             }
+        }
+        if(leftMost >= 0) {
+            String suffix = w.substring(leftMost, index) + w.substring(index + 1);
+            String sortedSuffix = sortValue(suffix);
+            String prefix = w.substring(0, leftMost);
+            return prefix + w.charAt(index) + sortedSuffix;
         }
         return "no answer";
     }
@@ -73,8 +72,5 @@ public class BiggerIsGreater {
         sample1.stream().map(BiggerIsGreater::biggerIsGreater).forEach(System.out::println);
 
     }
-
-
-
 
 }

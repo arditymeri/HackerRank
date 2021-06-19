@@ -221,4 +221,12 @@ public class BiggerIsGreaterTest {
         }
     }
 
+    @Test
+    public void test_ehdegnmorgafrjxvksc() {
+        String actual = BiggerIsGreater.biggerIsGreater("ehdegnmorgafrjxvksc");
+        String expected = "ehdegnmorgafrjxvsck";
+        assertEquals(expected, actual);
+
+    }
+
 }
