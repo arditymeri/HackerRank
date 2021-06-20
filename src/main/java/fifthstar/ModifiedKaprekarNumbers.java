@@ -6,19 +6,20 @@ import java.util.stream.IntStream;
 public class ModifiedKaprekarNumbers {
 
     public static void kaprekarNumbers(int p, int q) {
-        String toPrint = IntStream.range(p, q)
+        String toPrint = IntStream.range(p, q + 1)
                 .filter(ModifiedKaprekarNumbers::isKaprekarNumber)
                 .mapToObj(Integer::toString)
                 .collect(Collectors.joining(" "));
+        toPrint = toPrint.isEmpty() ? "INVALID RANGE" : toPrint;
         System.out.println(toPrint);
     }
 
     public static boolean isKaprekarNumber(int p) {
         int numDigits = findNumDigits(p);
-        int squared = p * p;
+        long squared = (long)p * p;
         int d = (int) Math.pow(10, numDigits);
-        int r = squared % d;
-        int l = squared / d;
+        int r = (int) (squared % d);
+        int l = (int) (squared / d);
         return l + r == p;
     }
 

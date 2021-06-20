@@ -30,4 +30,17 @@ public class ModifiedKaprekarNumbersTest {
     public void test_isKaprekarNumber_shouldReturnFalse() {
         assertFalse(ModifiedKaprekarNumbers.isKaprekarNumber(5));
     }
+
+    @Test
+    public void test_isKaprekarNumber45_shouldReturnTrue() {
+        assertTrue(ModifiedKaprekarNumbers.isKaprekarNumber(45));
+
+    }
+
+    @Test
+    public void test_printNumbers() {
+        ModifiedKaprekarNumbers.kaprekarNumbers(1, 98);
+        ModifiedKaprekarNumbers.kaprekarNumbers(9, 20);
+        assertTrue(true);
+    }
 }
