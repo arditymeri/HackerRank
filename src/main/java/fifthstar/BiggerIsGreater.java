@@ -21,14 +21,12 @@ public class BiggerIsGreater {
 
         for (int i = w.length() - 1; i >= 0; i--) {
             int firstLeftSideSmallerThan = findFirstFirstSmallerThan(w, i);
-            if (firstLeftSideSmallerThan >= 0) {
-                if(firstLeftSideSmallerThan > leftMost) {
-                    leftMost = firstLeftSideSmallerThan;
-                    index = i;
-                }
+            if (firstLeftSideSmallerThan >= 0 && firstLeftSideSmallerThan > leftMost) {
+                leftMost = firstLeftSideSmallerThan;
+                index = i;
             }
         }
-        if(leftMost >= 0) {
+        if (leftMost >= 0) {
             String suffix = w.substring(leftMost, index) + w.substring(index + 1);
             String sortedSuffix = sortValue(suffix);
             String prefix = w.substring(0, leftMost);
