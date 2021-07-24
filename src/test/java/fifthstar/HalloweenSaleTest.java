@@ -1,13 +1,14 @@
 package fifthstar;
 
-import org.junit.Test;
 
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HalloweenSaleTest {
 
     @Test
-    public void howManyGames() {
+    void howManyGames() {
         int g1 = HalloweenSale.howManyGames(20, 3, 6, 70);
         assertEquals(5, g1);
 

@@ -1,38 +1,39 @@
 package fifthstar;
 
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import org.junit.jupiter.api.Test;
 
 public class ModifiedKaprekarNumbersTest {
 
     @Test
-    public void test_numberOfDigits_shouldReturnOne() {
+    void test_numberOfDigits_shouldReturnOne() {
         assertEquals(1, ModifiedKaprekarNumbers.findNumDigits(0));
     }
 
     @Test
-    public void test_numberOfDigits_shouldReturnTwo() {
+    void test_numberOfDigits_shouldReturnTwo() {
         assertEquals(2, ModifiedKaprekarNumbers.findNumDigits(10));
     }
 
     @Test
-    public void test_numberOfDigits_shouldReturnThree() {
+    void test_numberOfDigits_shouldReturnThree() {
         assertEquals(3, ModifiedKaprekarNumbers.findNumDigits(101));
     }
 
     @Test
-    public void test_isKaprekarNumber_shouldReturnTrue() {
+    void test_isKaprekarNumber_shouldReturnTrue() {
         assertTrue(ModifiedKaprekarNumbers.isKaprekarNumber(9));
     }
 
     @Test
-    public void test_isKaprekarNumber_shouldReturnFalse() {
+    void test_isKaprekarNumber_shouldReturnFalse() {
         assertFalse(ModifiedKaprekarNumbers.isKaprekarNumber(5));
     }
 
     @Test
-    public void test_isKaprekarNumber45_shouldReturnTrue() {
+    void test_isKaprekarNumber45_shouldReturnTrue() {
         assertTrue(ModifiedKaprekarNumbers.isKaprekarNumber(45));
 
     }
