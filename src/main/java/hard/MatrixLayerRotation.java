@@ -8,7 +8,7 @@ import static java.util.Arrays.asList;
 
 public class MatrixLayerRotation {
 
-    public static void matrixRotation(List<List<Integer>> matrix, int r) {
+    public List<List<Integer>> matrixRotation(List<List<Integer>> matrix, int r) {
         int m = matrix.size();
         int n = matrix.get(0).size();
         int numLayers = Math.min(m, n) / 2;
@@ -21,20 +21,17 @@ public class MatrixLayerRotation {
             shift(layer, r);
         }
         fill(layers, matrix);
-        matrix.forEach(list -> {
-            String line = list.stream().map(i -> i.toString()).collect(Collectors.joining(" "));
-            System.out.println(line);
-        });
+        return matrix;
     }
 
-    private static void fill(List<List<Integer>> layers, List<List<Integer>> matrix) {
+    private void fill(List<List<Integer>> layers, List<List<Integer>> matrix) {
         for (int i = 0; i < layers.size(); i++) {
             List<Integer> layer = layers.get(i);
             fill(layer, i, matrix);
         }
     }
 
-    private static void fill(List<Integer> layer, int index, List<List<Integer>> matrix) {
+    private void fill(List<Integer> layer, int index, List<List<Integer>> matrix) {
         int i = index;
         int j = index;
         int m = matrix.size();
@@ -47,20 +44,20 @@ public class MatrixLayerRotation {
         }
     }
 
-    private static Point findNextPosition(int i, int j, int offset, int m, int n) {
+    private Point findNextPosition(int i, int j, int offset, int m, int n) {
         if (j == offset && i < m - 1 - offset) {
-            return new Point(i+1, j);
+            return new Point(i + 1, j);
         }
         if (i == m - 1 - offset && j < n - 1 - offset) {
             return new Point(i, j + 1);
         }
         if (j == n - 1 - offset && i > offset) {
-            return new Point(i-1, j);
+            return new Point(i - 1, j);
         }
         return new Point(i, j - 1);
     }
 
-    private static void shift(List<Integer> layer, int r) {
+    private void shift(List<Integer> layer, int r) {
         int shiftOffset = r % layer.size();
         if (shiftOffset == 0) {
             return;
@@ -72,7 +69,7 @@ public class MatrixLayerRotation {
         }
     }
 
-    private static List<Integer> findLayer(List<List<Integer>> matrix, int index) {
+    private List<Integer> findLayer(List<List<Integer>> matrix, int index) {
         List<Integer> col1 = new ArrayList<>();
         List<Integer> col2 = new ArrayList<>();
         int m = matrix.size();
@@ -100,6 +97,15 @@ public class MatrixLayerRotation {
         return layer;
     }
 
+    void print(List<List<Integer>> matrix) {
+        matrix.forEach(list -> {
+            String line = list.stream()
+                    .map(i -> i.toString())
+                    .collect(Collectors.joining(" "));
+            System.out.println(line);
+        });
+    }
+
     static class Point {
         public int i;
         public int j;
@@ -111,14 +117,14 @@ public class MatrixLayerRotation {
     }
 
     public static void main(String[] args) {
-        List<List<Integer>> matrix = asList(asList(1, 2, 3, 4), asList(5, 6, 7, 8), asList(9, 10, 11, 12), asList(13, 14, 15, 16));
-        List<Integer> layer = findLayer(matrix, 0);
-//        matrix.forEach(list -> {
-//            String line = list.stream().map(i -> String.format("%2d", i)).collect(Collectors.joining(" "));
-//            System.out.println(line);
-//        });
+        List<List<Integer>> matrix = asList(
+                asList(1, 2, 3, 4),
+                asList(5, 6, 7, 8),
+                asList(9, 10, 11, 12),
+                asList(13, 14, 15, 16));
 
-        System.out.println();
-        matrixRotation(matrix, 1);
+        MatrixLayerRotation matrixLayerRotation = new MatrixLayerRotation();
+        List<List<Integer>> rotated = matrixLayerRotation.matrixRotation(matrix, 1);
+        matrixLayerRotation.print(rotated);
     }
 }
