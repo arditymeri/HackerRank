@@ -2,13 +2,15 @@ package hard;
 
 public class MorganAndString {
 
-    public static String morganAndString(String a, String b) {
+    public static String morganAndString(String aa, String bb) {
         int j = 0;
         int d = 0;
+        String jackLetters = aa + "z";
+        String danielLetters = bb + "z";
         StringBuilder sb = new StringBuilder();
         do {
-            Character jack = a.charAt(j);
-            Character daniel = b.charAt(d);
+            Character jack = jackLetters.charAt(j);
+            Character daniel = danielLetters.charAt(d);
             int compare = jack.compareTo(daniel);
             if (compare < 0) {
                 sb.append(jack);
@@ -17,48 +19,37 @@ public class MorganAndString {
                 sb.append(daniel);
                 d++;
             } else {
-                int repeatedPrefixLength1 = findRepeatedPrefix(a.substring(j));
-                int repeatedPrefixLength2 = findRepeatedPrefix(b.substring(d));
+                int repeatedPrefixLength1 = findRepeatedPrefix(jackLetters.substring(j));
+                int repeatedPrefixLength2 = findRepeatedPrefix(danielLetters.substring(d));
                 int step = Math.min(repeatedPrefixLength1, repeatedPrefixLength2);
-                String nextJ = a.substring(j + step);
-                String nextD = b.substring(d + step);
+                String nextJ = jackLetters.substring(j + step);
+                String nextD = danielLetters.substring(d + step);
                 if(nextJ.isEmpty()) {
-                    String aSuffix = a.substring(j);
-                    if(aSuffix.compareTo(nextD) <= 0) {
-                        sb.append(a, j, j + step);
-                        j += step;
-                    } else {
-                        sb.append(b, d, d + step);
-                        d += step;
-                    }
+                    sb.append(danielLetters, d, d + repeatedPrefixLength2);
+                    d += repeatedPrefixLength2;
                 } else if (nextD.isEmpty()) {
-                    String bSuffix = b.substring(j);
-                    if(bSuffix.compareTo(nextD) > 0) {
-                        sb.append(a, j, j + step);
-                        j += step;
-                    } else {
-                        sb.append(b, d, d + step);
-                        d += step;
-                    }
-                } else if (nextJ.compareTo(nextD) <= 0) {
-                    sb.append(a, j, j + step);
+                    sb.append(jackLetters, j, j + repeatedPrefixLength1);
+                    j += repeatedPrefixLength1;
+                } else if ((nextJ).compareTo(nextD) <= 0) {
+                    sb.append(jackLetters, j, j + step);
                     j += step;
                 } else {
-                    sb.append(b, d, d + step);
+                    sb.append(danielLetters, d, d + step);
                     d += step;
                 }
             }
 
-        } while (j != a.length() && d != b.length());
-        if (j < a.length()) {
-            String suffix = a.substring(j);
+        } while (j != jackLetters.length() && d != danielLetters.length());
+        if (j < jackLetters.length()) {
+            String suffix = jackLetters.substring(j);
             sb.append(suffix);
         }
-        if (d < b.length()) {
-            String suffix = b.substring(d);
+        if (d < danielLetters.length()) {
+            String suffix = danielLetters.substring(d);
             sb.append(suffix);
         }
-        return sb.toString();
+        String result = sb.toString();
+        return result.substring(0, result.length()-2);
     }
 
     private static int findRepeatedPrefix(String substring) {
