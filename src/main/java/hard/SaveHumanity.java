@@ -2,51 +2,55 @@ package hard;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SaveHumanity {
 
     public static void virusIndices(String patientDNA, String virusDNA) {
 
+        int pDNALength = patientDNA.length();
+        int vDNALength = virusDNA.length();
+        boolean matchFound = false;
+        for (int i = 0; i <= pDNALength - vDNALength; i++) {
+            String dnaPart = patientDNA.substring(i, i + vDNALength);
+            if (matchesSimilarDNA(dnaPart, virusDNA)) {
+                System.out.print(i + " ");
+                matchFound = true;
+            }
+        }
+        if (matchFound) {
+            System.out.println();
+        } else {
+            System.out.println("No Match!");
+        }
+    }
+
+    public static List<Integer> calcVirusIndices(String patientDNA, String virusDNA) {
         List<Integer> indices = new ArrayList<>();
         int pDNALength = patientDNA.length();
         int vDNALength = virusDNA.length();
         for (int i = 0; i <= pDNALength - vDNALength; i++) {
-            if (patientDNA.startsWith(virusDNA, i)) {
+            String dnaPart = patientDNA.substring(i, i + vDNALength);
+            if (matchesSimilarDNA(dnaPart, virusDNA)) {
                 indices.add(i);
-            } else {
-                String dnaPart = patientDNA.substring(i, i+vDNALength);
-                List<String> similarDNAs = generateSimilarDNAs(dnaPart, virusDNA);
-                String dnaSuffix = patientDNA.substring(i);
-                boolean match = similarDNAs.stream().anyMatch(dnaSuffix::startsWith);
-                if(match) {
-                    indices.add(i);
-                }
             }
         }
-        if(indices.isEmpty()) {
-            System.out.println("No Match!");
-        } else {
-            String result = indices.stream()
-                    .map(i -> i.toString())
-                    .collect(Collectors.joining(" "));
-            System.out.println(result);
-        }
+        return indices;
     }
 
-    private static List<String> generateSimilarDNAs(String dnaPart, String virusDNA) {
-        List<String> similarDNAs = new ArrayList<>();
+    private static boolean matchesSimilarDNA(String dnaPart, String virusDNA) {
         int dnaLength = virusDNA.length();
+        int differencesCount = 0;
         for (int i = 0; i < dnaLength; i++) {
-            String similar;
-            if (i == dnaLength - 1) {
-                similar = virusDNA.substring(0, i) + dnaPart.charAt(i);
-            } else {
-                similar = virusDNA.substring(0, i) + dnaPart.charAt(i) + virusDNA.substring(i + 1, dnaLength);
+            Character p = dnaPart.charAt(i);
+            Character v = virusDNA.charAt(i);
+            if (!p.equals(v)) {
+                differencesCount++;
             }
-            similarDNAs.add(similar);
+            if (differencesCount > 1) {
+                return false;
+            }
         }
-        return similarDNAs;
+        return true;
     }
 
     public static void main(String[] args) {
