@@ -4,11 +4,11 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class GameOfThronesII {
 
-    private static final int MOD = (int) Math.pow(10, 9) + 7;
+    private static final BigInteger MOD = BigInteger.valueOf((int)Math.pow(10, 9) + 7);
+    private static final Map<Integer, List<Integer>> primeFactorsMap = new HashMap<>();
 
     public static int solve(String s) {
         Map<String, Long> histogram = s.chars()
@@ -23,24 +23,31 @@ public class GameOfThronesII {
         }
 
         int halfSize = size / 2;
-        List<Integer> nominators = Stream.iterate(1, i -> i + 1)
-                .limit(halfSize)
-                .collect(Collectors.toList());
-        Collection<Long> denominatorFactorials = histogram.values();
-        for (Long denominatorFactorial : denominatorFactorials) {
-            List<Integer> denominators = Stream.iterate(1, i -> i + 1)
-                    .limit(denominatorFactorial)
-                    .collect(Collectors.toList());
+
+        List<Long> denominatorFactorials = histogram.values().stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+        Long maxDenom = denominatorFactorials.get(0);
+        List<Integer> nominators = generateFactorialFactors(maxDenom+1, halfSize);
+        for (int i = 1; i<denominatorFactorials.size(); i++) {
+            Long denominatorFactorial = denominatorFactorials.get(i);
+            List<Integer> denominators = generateFactorialFactors(2, denominatorFactorial);
             simplify(nominators, denominators);
         }
         return modMultiply(nominators);
+    }
+
+    private static List<Integer> generateFactorialFactors(long start, long end) {
+        List<Integer> factors = new ArrayList<>();
+        for (long i = start; i <= end; i++) {
+            factors.add((int)i);
+        }
+        return factors;
     }
 
     private static int modMultiply(List<Integer>values) {
         BigInteger result = BigInteger.ONE;
         for (Integer value : values) {
             BigInteger biValue  = BigInteger.valueOf(value);
-            result = (result.multiply(biValue)).mod(BigInteger.valueOf(MOD));
+            result = (result.multiply(biValue)).mod(MOD);
         }
         return result.intValue();
     }
@@ -58,8 +65,13 @@ public class GameOfThronesII {
                 }
             }
             if(!found) {
-                System.out.println("No simplifier found for: " + denominator);
-                List<Integer> primeFactors = primeFactorisation(denominator);
+                List<Integer> primeFactors;
+                if(primeFactorsMap.containsKey(denominator)) {
+                    primeFactors = primeFactorsMap.get(denominator);
+                } else {
+                    primeFactors = primeFactorisation(denominator);
+                    primeFactorsMap.put(denominator, primeFactors);
+                }
                 simplify(nominators, primeFactors);
             }
 
@@ -69,7 +81,12 @@ public class GameOfThronesII {
     private static List<Integer> primeFactorisation(Integer value) {
         List<Integer> primeFactors = new ArrayList<>();
         int number = value;
-        for (int i = 2; i < number / 2; i++) {
+        while (number % 2 == 0) {
+            primeFactors.add(2);
+            number /=2;
+        }
+        double limit = Math.sqrt(number);
+        for (int i = 3; i <= limit; i+=2) {
             while (number % i == 0) {
                 primeFactors.add(i);
                 number /= i;
@@ -80,40 +97,7 @@ public class GameOfThronesII {
         }
         return primeFactors;
     }
-
-    List<String> findPermutations(String value) {
-        if (value.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        if(value.length() == 1) {
-            return Collections.singletonList(value);
-        }
-        List<String> permutations = new ArrayList<>();
-        for (int i = 0; i < value.length(); i++) {
-            char c = value.charAt(i);
-            String remaining = value.substring(0, i) + value.substring(i+1);
-            List<String> remainingPermutations = findPermutations(remaining);
-            remainingPermutations.stream()
-                    .map(p -> c + p)
-                    .forEach(permutations::add);
-        }
-        return permutations;
-    }
-
     public static void main(String[] args) {
-//        GameOfThronesII got = new GameOfThronesII();
-//        List<String> permutations = got.findPermutations("aaaabbbcde");
-//        int size = permutations.size();
-//        System.out.println(size);
-//        System.out.println(size%31);
-//
-//        long distinct = permutations.stream().distinct().count();
-//        System.out.println("Distinct: " + distinct);
-//
-//        System.out.println(solve("cdcdcdcdeeeef"));
-//        System.out.println(solve("aaaabbbcde"));
-//        System.out.println(solve("aaabbbb"));
 
         String sampleInput2 = "wklmxibigvaeqzigwbgysgfbvyvcqczmmnzlxatdxtjqvrwrucsmixpfvkhnniabxbnudizbejtzcpszrmlbkdih" +
                 "nrvczxezytvdbvgfgzgiobhhnvkzyuhnleqndwmbrhgucnckmitdlcmzzzyzthnfnfsqdgtunaospqcdbximcvlbwmbpvqulvobyux" +
@@ -127,9 +111,6 @@ public class GameOfThronesII {
                 "zsisdranbwjhgenaxjqomasanlkcpzhqrqixjkmkgvrmbgbdhijklnpqtvwz";
         int sampleOutput2 = solve(sampleInput2);
         System.out.println(sampleOutput2);
-
-//        int result = modMultiply(Arrays.asList(1000, 1000, 1001, 100000, 100000));
-//        System.out.println(result);
 
     }
 }
