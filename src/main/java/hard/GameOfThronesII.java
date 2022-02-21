@@ -59,7 +59,7 @@ public class GameOfThronesII {
                 Integer nominator = nominators.get(i);
                 if(nominator % denominator == 0) {
                     int r = nominator / denominator;
-                    nominators.set(i, r);
+                    optimize(nominators, i, r);
                     found = true;
                     break;
                 }
@@ -75,6 +75,25 @@ public class GameOfThronesII {
                 simplify(nominators, primeFactors);
             }
 
+        }
+    }
+
+    private static void optimize(List<Integer> nominators, int index, int r) {
+        boolean found = false;
+        for(int i = 0; i < nominators.size(); i++) {
+            int n = nominators.get(i);
+            if(i != index && n != 1) {
+                BigInteger nominator = BigInteger.valueOf(n);
+                if(nominator.multiply(BigInteger.valueOf(r)).compareTo(MOD) < 0) {
+                    nominators.set(i, 1);
+                    nominators.set(index, r * n);
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if (!found) {
+            nominators.set(index, r);
         }
     }
 
