@@ -23,22 +23,47 @@ public class GameOfThronesII {
         }
 
         int halfSize = size / 2;
-
-        List<Long> denominatorFactorials = histogram.values().stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
-        Long maxDenom = denominatorFactorials.get(0);
-        List<Integer> nominators = generateFactorialFactors(maxDenom+1, halfSize);
-        for (int i = 1; i<denominatorFactorials.size(); i++) {
-            Long denominatorFactorial = denominatorFactorials.get(i);
-            List<Integer> denominators = generateFactorialFactors(2, denominatorFactorial);
+        List<Long> denominatorFactorials = histogram.values()
+                .stream()
+                .sorted(Comparator.reverseOrder())
+                .collect(Collectors.toList());
+        List<Integer> nominators = generateFactorialFactors(halfSize);
+        nominators = maximizeNominators(nominators);
+        for (Long denominatorFactorial : denominatorFactorials) {
+            List<Integer> denominators = generateFactorialFactors(denominatorFactorial);
             simplify(nominators, denominators);
+            nominators = maximizeNominators(nominators);
         }
         return modMultiply(nominators);
     }
 
-    private static List<Integer> generateFactorialFactors(long start, long end) {
+    private static List<Integer> maximizeNominators(List<Integer> nominators) {
+        List<Integer> maximised = new ArrayList<>();
+        int size = nominators.size();
+        int j = 0;
+        for (int i = size - 1; i >= 0; i--) {
+            BigInteger result = BigInteger.valueOf(nominators.get(i));
+            while (j < i) {
+                BigInteger t = result.multiply(BigInteger.valueOf(nominators.get(j)));
+                if (t.compareTo(MOD) < 0) {
+                    result = t;
+                    j++;
+                } else {
+                    break;
+                }
+            }
+            maximised.add(result.intValue());
+            if(i == j) {
+                break;
+            }
+        }
+        return maximised;
+    }
+
+    private static List<Integer> generateFactorialFactors(long end) {
         List<Integer> factors = new ArrayList<>();
-        for (long i = start; i <= end; i++) {
-            factors.add((int)i);
+        for (int i = 2; i <= end; i++) {
+            factors.add(i);
         }
         return factors;
     }
@@ -46,8 +71,8 @@ public class GameOfThronesII {
     private static int modMultiply(List<Integer>values) {
         BigInteger result = BigInteger.ONE;
         for (Integer value : values) {
-            BigInteger biValue  = BigInteger.valueOf(value);
-            result = (result.multiply(biValue)).mod(MOD);
+            BigInteger bigValue = BigInteger.valueOf(value);
+            result = (result.multiply(bigValue)).mod(MOD);
         }
         return result.intValue();
     }
@@ -58,8 +83,8 @@ public class GameOfThronesII {
             for(int i = 0; i < nominators.size(); i++) {
                 Integer nominator = nominators.get(i);
                 if(nominator % denominator == 0) {
-                    int r = nominator / denominator;
-                    optimize(nominators, i, r);
+                    int r = nominator/denominator;
+                    nominators.set(i, r);
                     found = true;
                     break;
                 }
@@ -75,25 +100,6 @@ public class GameOfThronesII {
                 simplify(nominators, primeFactors);
             }
 
-        }
-    }
-
-    private static void optimize(List<Integer> nominators, int index, int r) {
-        boolean found = false;
-        for(int i = 0; i < nominators.size(); i++) {
-            int n = nominators.get(i);
-            if(i != index && n != 1) {
-                BigInteger nominator = BigInteger.valueOf(n);
-                if(nominator.multiply(BigInteger.valueOf(r)).compareTo(MOD) < 0) {
-                    nominators.set(i, 1);
-                    nominators.set(index, r * n);
-                    found = true;
-                    break;
-                }
-            }
-        }
-        if (!found) {
-            nominators.set(index, r);
         }
     }
 
